@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Node with EJS view engine</title>
+	<link rel="stylesheet" type="text/css" href="/public/style.css">
+</head>
+<body>
+<% if(ID) { %>
+<h1>Student ID is <%=ID %> Name is <%=Name %></h1>
+<% } else {%>
+<h1>Hello World !!</h1>
+<% } %>
+
+<form method="POST" action="/student">
+	firstname:<input type="text" name="firstname" id="firstname" /></br>
+	lastname:<input type="text" name="lastname" id="lastname" /></br>
+	<input type="submit" name="submit" value="Submit">
+</form>
+</body>
+</html>
