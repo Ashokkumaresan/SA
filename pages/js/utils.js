@@ -12,35 +12,66 @@ window.chartColors = {
 window.randomScalingFactor = function() {
 	return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
 }
-var generic=(function(){
-function eventHandlers(_obj){
-	var _list={};
-	_list[_obj]= _list[_obj] || {};
-	_obj.addEvent=function(_type,_listener){
-		if(!_list[_obj][_type]){
-			_list[_obj][_type]=[];
-		}
-		if(_list[_obj][_type].indexOf(_listener)==-1){
-			_list[_obj][_type].push(_listener);
-		}
+generic=(function(){
+	var serviceList=serviceList || {};
+	serviceList.addService=function(name,alias,fn){
+			if(!serviceList[name]){
+				serviceList[name]=[];				
+			}
+			var _obj=new Object();
+			_obj.alias=alias;
+			_obj.fun=fn;
+			serviceList[name].push(_obj);
 	};
-
-	_obj.removeEvent=function(_type,_listener){
-		if(_list[_obj][_type]){
-			var _i=_list[_obj][_type].indexOf(_listener);
+	serviceList.removeService=function(name,alias){
+		if(serviceList[name]){		
+		if(alias==undefined){	
+			delete serviceList[name];			
+		}
+		else{
+			var _i=-1;
+			serviceList[name].forEach(function(value,index){
+				if(value.alias==alias){
+					_i=index;
+				return false;
+				}
+			});
 			if(_i!=-1)
-				_list[_obj][_type].splice(_i,1);
-		}
+				serviceList[name].splice(_i,1);
+		}	 
+	}
 	};
-	_obj.dispatch=function(_type,_args){
-		if(_list[_obj][_type]){
-			_list[_obj][_type].forEach(function(_fn){
-				_fn(_args);
+	serviceList.invoke=function(name,alias,_this,_args){		
+		if(serviceList[name]){
+			serviceList[name].forEach(function(value,index){
+				if(value.alias==alias){
+					value.fun.apply(_this,_args);
+				return false;
+				}
 			});
 		}
+	};	
+	
+		var invokeService=function(_obj){
+						$.ajax({
+						url: _obj.service,
+						// dataType: "jsonp",
+						data: _obj.data,	
+						contentType: 'application/json',						
+						type: _obj.type,
+						json: true,
+						crossDomain: true,	
+						success: function (data) {	
+							_obj.callback(data);
+						},
+						error: function (xhr, status, error) {
+							console.log('Error: ' + error.message);							
+						},
+					});
 	}
-}
-return{
-	event:eventHandlers
-}
+	serviceList.addService("generic","Ajax",invokeService);
+	return{
+		service:serviceList
+	}
 })();
+

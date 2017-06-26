@@ -32,10 +32,10 @@
     <form class="form-signin1 smallbox ">
       <figure class="user-login circle"><img src="img/team.png" alt="unlock"></figure>
       <label class="sr-only">Password</label>
-       <input type="text" class="form-control" placeholder="Username" required></br>
-      <input type="password" class="form-control" placeholder="Password" required>
+       <input type="text" class="form-control" placeholder="Username" required id="txtuser"></br>
+      <input type="password" class="form-control" placeholder="Password" required id="txtpass">
       <!--<a href="/dashboard.html" class="btn btn-lg btn-primary btn-round">Unlock</a><br> -->
-      <input type="submit"  class="btn btn-lg btn-primary btn-round" name="Unlock" value="Unlock"/>
+      <input type="button"  class="btn btn-lg btn-primary btn-round" name="Unlock" value="Unlock" id="btnLogin"/>
     </form>
     <p class="mt-3">Not you? <a href="#" class="text-white">Sign in as different user</a>!</p>
   </div>
@@ -49,13 +49,8 @@
 <!-- IE10 viewport hack for Surface/desktop Windows 8 bug --> 
 <script src="js/ie10-viewport-bug-workaround.js"></script>  
 <script src="js/utils.js"></script>  
-    <script>
-        "use strict";
-        $('input[type="checkbox"]').on('change', function(){
-            $(this).parent().toggleClass("active")
-            $(this).closest(".media").toggleClass("active");
-        }); 
-      </script>
+<script type="text/javascript" src="modules/Login.js"></script>
+  
 </body>
 
 <!-- Mirrored from maxartkiller.in/website/Adminux/pages/lock1.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 27 May 2017 11:56:33 GMT -->
