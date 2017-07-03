@@ -16,6 +16,26 @@ var dairyService=(function(){
 		alert("Update Sccuess")
 	}
 
+	var getDairy=function(){
+		generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"GET","data":{},"callback":successGetDate}]);
+	}
+
+	var successGetDate =function(res){
+		var len=res.length;
+		var row="";
+		res.forEach(function(value,index){
+			value.timeSlot.forEach(function(value1,index1){
+			 row+="<tr class='odd' role='row'>"+
+                  "<td tabindex='0' class='sorting_1'><img src='../img/team.png' alt='' class='gridpic'>"+value.username+"</td>"+
+                  "<td>"+value.date+"</td>"+
+                  "<td>"+value1.time+"</td>"+
+                  "<td class='center'>"+value1.content+"</td>"+                 
+                "</tr>";
+                });
+		});
+		$('#td_body').append(row);
+	}
+
 	var loadDateTime=function(){
 		var d=new Date();
 		$('#txtdate').val(d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear());
@@ -58,11 +78,13 @@ var dairyService=(function(){
 	return{
 		insert:insertDetails,
 		load:loadDateTime,
-		check:checkDateEntry
+		check:checkDateEntry,
+		get:getDairy
 	}
 
 })();
 dairyService.load();
+dairyService.get();
 $(document).ready(function(e){
 	$('#txtdairysubmit').click(function(e){
 		//alert('hi');

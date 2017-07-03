@@ -64,6 +64,43 @@ else{
 /*ENd Dashboard service*/
 
 /*Start Dairy service*/
+
+router.get('/api/dairy',function(req,res){	
+var query={};
+query["username"]=req.session.User[0].username;
+console.log(query);
+MongoClient=mongo.MongoClient;
+var url='mongodb://localhost/SA';
+MongoClient.connect(url,function(err,db){
+if(err){
+	console.log("Error is getting data "+err);
+}
+else{
+	var collection=db.collection("dairies");
+		collection.find(query).toArray(function(err,result){
+			if(err){
+				console.log("Error is getting data "+err);
+			}
+			else{					
+					//res.json(result.length);
+				if(result.length>0){
+					//res.header('Content-Length', 100);
+					//var obj={"status":true};
+					res.json(result);
+			//return res.redirect('http://localhost:3000/dashboard.html');
+				}else{							
+						res.header('Content-Length', 100);
+						var obj={"status":false};
+						res.json(obj);
+					}
+			}
+			});
+			db.close();
+}
+});
+});
+
+
 router.post('/api/dairy',function(req,res){
 	console.log("In Post");
 var query=req.body;
