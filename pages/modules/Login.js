@@ -16,6 +16,7 @@ var loginService=(function(){
 })();
 
 $(document).ready(function(e){
+	
 $('#btnLogin').click(function(e){
 	var user=$('#txtuser').val();
 	var pass=$('#txtpass').val();

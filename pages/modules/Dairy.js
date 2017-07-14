@@ -1,32 +1,36 @@
 var dairyService=(function(){
 	var insertDetails=function(data){
 		//alert(JSON.stringify(data));
-		var res=generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"POST","data":data,"callback":insertSuccess}]);
-	}
-
-	var insertSuccess=function(res){
-			alert("Insert Sccuess")
+		var res=generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"POST","data":data,"callback":getDairy}]);
 	}
 
 		var updateDetails=function(data){
 		//alert(JSON.stringify(data));
-		var res=generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"PUT","data":data,"callback":updateSuccess}]);
-	}
-	var updateSuccess=function(res){
-		alert("Update Sccuess")
+		var res=generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"PUT","data":data,"callback":getDairy}]);
 	}
 
 	var getDairy=function(){
+		$('#txtdetails').val("");
 		generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/dairy","type":"GET","data":{},"callback":successGetDate}]);
+	}
+
+	var searchDairy=function(){		
+		var _date=$('#txtsearch').val();
+		var _obj={
+				"date":_date
+			}		
+		//alert(_obj);
+		generic.service.invoke("generic","Ajax",this,[{"service":"http://localhost:3000/api/searchdairy","type":"GET","data":_obj,"callback":successGetDate}]);
 	}
 
 	var successGetDate =function(res){
 		var len=res.length;
 		var row="";
+		$('#td_body').children().remove();		
 		res.forEach(function(value,index){
+			value.timeSlot.sort(sortTime);
 			value.timeSlot.forEach(function(value1,index1){
-			 row+="<tr class='odd' role='row'>"+
-                  "<td tabindex='0' class='sorting_1'><img src='../img/team.png' alt='' class='gridpic'>"+value.username+"</td>"+
+			 row+="<tr class='odd' role='row'>"+                 
                   "<td>"+value.date+"</td>"+
                   "<td>"+value1.time+"</td>"+
                   "<td class='center'>"+value1.content+"</td>"+                 
@@ -35,7 +39,12 @@ var dairyService=(function(){
 		});
 		$('#td_body').append(row);
 	}
-
+var sortTime=function(a,b){
+ return ((a.time > b.time) ? -1 : ((a.time < b.time) ? 1 : 0));
+}
+var sortDate=function(a,b){
+ return ((a.date > b.date) ? -1 : ((a.date < b.date) ? 1 : 0));
+}
 	var loadDateTime=function(){
 		var d=new Date();
 		$('#txtdate').val(d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear());
@@ -79,15 +88,33 @@ var dairyService=(function(){
 		insert:insertDetails,
 		load:loadDateTime,
 		check:checkDateEntry,
-		get:getDairy
+		get:getDairy,
+		search:searchDairy
 	}
 
 })();
+setInterval(function(){
 dairyService.load();
+},1000);
 dairyService.get();
 $(document).ready(function(e){
 	$('#txtdairysubmit').click(function(e){
 		//alert('hi');
 		dairyService.check();		
+	});
+	$('#txtdetails').keypress(function(e){
+		if(e.which==13)	
+			var _resp=confirm("Are you sure to write in your dairy?");
+		if(_resp)
+			dairyService.check();	
+	});
+			$('#txtsearch').focus(function(e){
+				if($(this).val()=="")
+					$(this).val($('#txtdate').val());
+	});
+
+		$('#txtsearch').keypress(function(e){
+		if(e.which==13)
+			dairyService.search();	
 	});
 });

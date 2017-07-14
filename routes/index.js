@@ -77,17 +77,13 @@ if(err){
 }
 else{
 	var collection=db.collection("dairies");
-		collection.find(query).toArray(function(err,result){
+		collection.find(query).sort({date:1}).toArray(function(err,result){
 			if(err){
 				console.log("Error is getting data "+err);
 			}
-			else{					
-					//res.json(result.length);
-				if(result.length>0){
-					//res.header('Content-Length', 100);
-					//var obj={"status":true};
-					res.json(result);
-			//return res.redirect('http://localhost:3000/dashboard.html');
+			else{
+				if(result.length>0){					
+					res.json(result);			
 				}else{							
 						res.header('Content-Length', 100);
 						var obj={"status":false};
@@ -98,6 +94,39 @@ else{
 			db.close();
 }
 });
+});
+
+router.get('/api/searchdairy',function(req,res){	
+	console.log("Search:"+req.query);
+	var query=req.query;
+	query["username"]=req.session.User[0].username;	
+	MongoClient=mongo.MongoClient;
+	console.log(query);
+var url='mongodb://localhost/SA';
+MongoClient.connect(url,function(err,db){
+if(err){
+	console.log("Error is getting data "+err);
+}
+else{
+	var collection=db.collection("dairies");
+		collection.find(query).toArray(function(err,result){
+			if(err){
+				console.log("Error is getting data "+err);
+			}
+			else{
+				if(result.length>0){					
+					res.json(result);			
+				}else{							
+						res.header('Content-Length', 100);
+						var obj={"status":false};
+						res.json(obj);
+					}
+			}
+			});
+			db.close();
+}
+});
+
 });
 
 
@@ -115,6 +144,9 @@ if(err){
 else{
 	var collection=db.collection("dairies");
 	collection.insert(query);
+	res.header('Content-Length', 100);
+	var obj={"status":true};
+	res.json(obj);
 }
 });
 });
@@ -134,6 +166,9 @@ if(err){
 else{
 	var collection=db.collection("dairies");
 	collection.update({"username":query.username,"date":query.find.date},{$push:{timeSlot:query.time}});
+	res.header('Content-Length', 100);
+	var obj={"status":true};
+	res.json(obj);
 }
 });
 });
